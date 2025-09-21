@@ -1,0 +1,150 @@
+-- ECommerce Database(Wellness Business)
+
+CREATE DATABASE MirrorMovementDB;
+USE MirrorMovementDB;
+-- The team
+CREATE TABLE Partners (
+PartnerID INT AUTO_INCREMENT PRIMARY KEY,
+FullName VARCHAR (100) NOT NULL,
+Type VARCHAR(100) NOT NULL,
+Phone VARCHAR(50) NOT NULL,
+Email VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Roles (
+RoleID INT AUTO_INCREMENT PRIMARY KEY,
+Role VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Employees (
+EmployeeID INT AUTO_INCREMENT PRIMARY KEY,
+FirstName VARCHAR(30)NOT NULL,
+LastName VARCHAR (30)NOT NULL,
+Phone VARCHAR(50) NOT NULL,
+Email VARCHAR(50) UNIQUE NULL,
+RoleID INT,
+FOREIGN KEY(RoleID) REFERENCES Roles(RoleID)
+);
+
+CREATE TABLE Customers (
+CustomerID INT AUTO_INCREMENT PRIMARY KEY,
+Fullname VARCHAR(100) NOT NULL,
+Phone VARCHAR(20) NOT NULL,
+Email VARCHAR(100) UNIQUE,
+Address VARCHAR(150) NOT NULL,
+JoinDate DATE
+);
+
+-- Goodies
+CREATE TABLE Categories (
+CategoryID INT AUTO_INCREMENT PRIMARY KEY,
+CategoryName VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Products (
+ProductID INT AUTO_INCREMENT PRIMARY KEY,
+ProductName VARCHAR(50) NOT NULL,
+CategoryID INT,
+Price DECIMAL(10,2),
+Description TEXT,
+PartnerID INT,
+ActiveFlag BOOLEAN DEFAULT TRUE,
+FOREIGN KEY(CategoryID) REFERENCES Categories(CategoryID),
+FOREIGN KEY(PartnerID) REFERENCES Partners(PartnerID)
+);
+
+CREATE TABLE Customization (
+CustomizationID INT AUTO_INCREMENT PRIMARY KEY,
+ProductID INT NOT NULL,
+CustomType VARCHAR(50) NOT NULL,
+CustomValue VARCHAR(100),
+AdditionalFee DECIMAL(10,2),
+FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+CREATE TABLE Supplier (
+SupplierID INT AUTO_INCREMENT PRIMARY KEY,
+FirstName VARCHAR(50) NOT NULL,
+LastName VARCHAR(50),
+Phone VARCHAR(30) NOT NULL,
+Email VARCHAR(50)
+);
+
+CREATE TABLE SupplierProducts (
+SupplierID INT,
+ProductID INT NOT NULL,
+SupplyPrice DECIMAL(10,2) NOT NULL,
+PRIMARY KEY (SupplierID, ProductID),
+FOREIGN KEY(SupplierID) REFERENCES Supplier(SupplierID),
+FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+CREATE TABLE Inventory (
+ItemID INT AUTO_INCREMENT PRIMARY KEY,
+ProductID INT,
+Quantity INT NOT NULL,
+SupplierID INT,
+ReorderLevel INT NOT NULL,
+FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+-- Biz works
+CREATE TABLE Orders (
+OrderID INT AUTO_INCREMENT PRIMARY KEY,
+OrderDate DATE NOT NULL,
+RequiredDate DATE,
+ShippedDate DATE,
+Status VARCHAR(20) NOT NULL,
+CustomerID INT NOT NULL,
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+CREATE TABLE OrderDetails (
+OrderDetailID INT AUTO_INCREMENT PRIMARY KEY,
+OrderID INT NOT NULL,
+ProductID INT NOT NULL,
+QuantityOrdered INT NOT NULL,
+PriceEach DECIMAL(10,2) NOT NULL,
+FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+CREATE TABLE Payment (
+PaymentID INT AUTO_INCREMENT PRIMARY KEY,
+PaymentDate DATE NOT NULL,
+PaymentMethod VARCHAR (30) NOT NULL,
+TransactionCode VARCHAR (100) NULL,
+Amount DECIMAL(10,2)NOT NULL,
+CustomerID INT NOT NULL,
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+-- Recurring Mula🤭
+CREATE TABLE SubscriptionType(
+TypeID INT AUTO_INCREMENT PRIMARY KEY,
+Type VARCHAR(20) UNIQUE,
+Duration INT,
+Price DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE SubscriptionStatus (
+StatusID INT AUTO_INCREMENT PRIMARY KEY,
+StatusName VARCHAR (20)
+);
+
+CREATE TABLE Subscriptions (
+SubID INT AUTO_INCREMENT PRIMARY KEY,
+CustomerID INT NOT NULL,
+TypeID INT NOT NULL,
+StartDate DATE NOT NULL,
+EndDate DATE,
+StatusID INT,
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+FOREIGN KEY (TypeID) REFERENCES SubscriptionType(TypeID),
+FOREIGN KEY (StatusID) REFERENCES SubscriptionStatus(StatusID)
+);
+
+
+
+
+
